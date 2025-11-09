@@ -26,6 +26,7 @@ jobs:
           rsync -av --progress ../../stock . --exclude .git --exclude .idea --exclude *.md --exclude *.bat --exclude __pycache__ --exclude .gitignore --exclude stock/cron --exclude stock/img --exclude stock/docker --exclude instock/cache --exclude instock/log --exclude instock/test
           rm -rf cron
           cp -r ../../stock/cron .
+        working-directory: docker
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.10.0
