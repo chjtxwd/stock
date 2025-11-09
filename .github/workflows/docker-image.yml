@@ -39,3 +39,4 @@ jobs:
             ghcr.io/chjtxwd/stock:latest
           platforms: linux/amd64,linux/arm64
           push: true
+          context: docker
