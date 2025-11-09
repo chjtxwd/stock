@@ -1,18 +1,35 @@
-姓名：名称：Docker 镜像 CI
+name: Release
 
 on:
-  push:
-    branches: [    分支：[“主”]"master" ]
-  pull_request:
-    branches: [    分支：[“主”]"master" ]
+  workflow_dispatch:
+  release:
+    types: [published]
+    branches: [master]
 
 jobs:
-
   build:
-
-    runs-on:     运行：ubuntu-latest
-
+    runs-on: ubuntu-latest
     steps:
-    - uses:     - 使用：actions/checkout@v3
-    - name:     - 名称：构建 Docker 镜像
-      run:       运行： docker build 。--file Dockerfile --tag my-image-name:$(日期 +%s): $(日期 +%s)
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create build context
+        run: |
+          docker context create ${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.10.0
+        with:
+          endpoint: ${{ github.sha }}
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@v5.0.0
+        with:
+          file: docker/Dockerfile
+          tags: ghcr.io/chjtxwd/stock:latest
+          platforms: linux/amd64,linux/arm64
+          push: true
